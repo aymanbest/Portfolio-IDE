@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { WindowProvider } from './contexts/WindowContext'
+import { useSidebarWidth } from './hooks/useSidebarWidth'
 import MenuBar from './components/layout/MenuBar'
 import ActivityBar from './components/layout/ActivityBar'
-import Sidebar from './components/Sidebar'
 import WindowManager from './components/windows/WindowManager'
 import StatusBar from './components/layout/StatusBar'
 
 function App() {
   const [activeMenu, setActiveMenu] = useState(null)
-  const [sidebarView, setSidebarView] = useState('explorer')
+  const [sidebarView, setSidebarView] = useState(null) // Changed to null as default
+  const [sidebarWidths, updateSidebarWidth] = useSidebarWidth(300)
+  
+  const handleViewChange = (view) => {
+    setSidebarView(currentView => currentView === view ? null : view)
+  }
   
   return (
     <ThemeProvider>
@@ -23,10 +28,10 @@ function App() {
           <div className="flex-1 flex overflow-hidden">
             <ActivityBar 
               activeView={sidebarView}
-              onViewChange={setSidebarView}
+              onViewChange={handleViewChange}
+              sidebarWidth={sidebarWidths[sidebarView]}
+              onWidthChange={(width) => updateSidebarWidth(sidebarView, width)}
             />
-            {/* Add Sidebar component here */}
-            {sidebarView && <Sidebar view={sidebarView} />}
             <div className="flex-1">
               <WindowManager />
             </div>
