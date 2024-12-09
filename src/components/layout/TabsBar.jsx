@@ -96,33 +96,67 @@ function TabsBar() {
   return (
     <>
       <div className="h-9 bg-[#252526] flex items-center overflow-x-auto">
-        {windows.map(window => (
-          <div
-            key={window.id}
-            className={`
-              group flex items-center h-8 px-3 border-t-2 min-w-[120px] max-w-[200px]
-              ${window.pinned ? 'border-blue-500' : 'border-transparent'}
-              ${window.id === activeWindow ? 'bg-[#1e1e1e]' : 'bg-[#2d2d2d] hover:bg-[#2d2d2d]'}
-            `}
-            onClick={() => focusWindow(window.id)}
-            onContextMenu={(e) => handleContextMenu(e, window)}
-          >
-            {window.pinned && (
-              <IconPin size={14} className="mr-2 text-blue-500" />
-            )}
-            <span className="truncate flex-1 text-sm">{window.title}</span>
-            <button
-              className="ml-2 p-1 hover:bg-[#404040] rounded opacity-0 group-hover:opacity-100"
-              onClick={(e) => {
-                e.stopPropagation()
-                closeWindow(window.id)
-              }}
-            >
-              <IconX size={14} />
-            </button>
-          </div>
-        ))}
+  {windows.map((window, index) => (
+    <div
+      key={window.id}
+      className={`
+        group relative flex items-center h-8 px-3 
+        min-w-[120px] max-w-[200px]
+        ${window.id === activeWindow 
+          ? 'bg-[#1e1e1e] border-t-2 border-[#007acc] shadow-md z-10' 
+          : 'bg-[#2d2d2d] hover:bg-[#383838] border-t border-transparent'}
+        ${index === 0 ? 'ml-0' : '-ml-1'} // Overlap tabs
+        ${window.pinned ? 'border-t-2 border-blue-500' : ''}
+        transition-all duration-150 ease-in-out
+      `}
+      onClick={() => focusWindow(window.id)}
+      onContextMenu={(e) => handleContextMenu(e, window)}
+    >
+      {/* Left Tab Edge */}
+      <div className={`
+        absolute left-0 top-0 bottom-0 w-[1px]
+        ${window.id === activeWindow 
+          ? 'bg-[#1e1e1e]' 
+          : 'bg-[#252526] group-hover:bg-[#383838]'}
+        transition-colors duration-150
+      `} />
+
+      {/* Tab Content */}
+      <div className="flex items-center flex-1 relative">
+        {window.pinned && (
+          <IconPin size={14} className="mr-2 text-blue-500" />
+        )}
+        <span className="truncate flex-1 text-sm">
+          {window.title}
+        </span>
+        <button
+          className={`
+            ml-2 p-1 rounded 
+            ${window.id === activeWindow 
+              ? 'opacity-100 hover:bg-[#404040]' 
+              : 'opacity-0 group-hover:opacity-100 hover:bg-[#404040]'}
+            transition-all duration-150
+          `}
+          onClick={(e) => {
+            e.stopPropagation()
+            closeWindow(window.id)
+          }}
+        >
+          <IconX size={14} />
+        </button>
       </div>
+
+      {/* Right Tab Edge */}
+      <div className={`
+        absolute right-0 top-0 bottom-0 w-[1px]
+        ${window.id === activeWindow 
+          ? 'bg-[#1e1e1e]' 
+          : 'bg-[#252526] group-hover:bg-[#383838]'}
+        transition-colors duration-150
+      `} />
+    </div>
+  ))}
+</div>
 
       {/* Context Menu */}
       {contextMenu.show && (
